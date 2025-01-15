@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <style>
+        .row-height{
+            max-height:50%;
+        }
+        .cut_text{
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+<h1>Home Page</h1>  <!-- to be deleted after the complete implementation of the application-->
+<h1 th:text="'Hello ' + ${user.getUsername()}"></h1>
+    <!--NAV BAR -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <form action="homePage">
+                            <a class="nav-link active" aria-current="page" href="homePage"> Home</a>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mybooks">My Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="destroy" method="post">
+                            <button>Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--Search bar-->
+    <form class="d-flex" role="search" action="homePage" method="post">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+    <!--Main content-->
+    <div class="container border border-dark col-11">
+        <div class="d-flex col-10 flex-fill">
+            <div class="col-3 py-2 flex-fill text-center">Title</div>
+            <div class="col-1 py-2 flex-fill text-center">ISBN</div>
+            <div class="col-2 py-2 flex-fill text-center">Language</div>
+            <div class="col-1 py-2 flex-fill text-center">Release</div>
+            <div class="col-4 py-2 flex-fill text-center">Summary</div>
+            <div class="col-1 py-2 flex-fill text-center">Pieces</div>
+        </div>
+        <div class="row" th:each="book: ${books}">
+            <a class="clickable col-10 d-flex flex-fill border" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
+                <div class="col-3 py-2 flex-fill text-center" th:text="${book.getTitle()}"></div>
+                <div class="col-1 py-2 flex-fill text-center" th:text="${book.getIsbn()}"></div>
+                <div class="col-2 py-2 flex-fill text-center" th:text="${book.getLanguage()}"></div>
+                <div class="col-1 py-2 flex-fill text-center" th:text="${book.getRelease()}"></div>
+                <div class="col-4 py-2 flex-fill text-center cut_text" th:text="${book.getSummary()}"></div>
+                <div class="col-1 py-2 flex-fill text-center" th:text="${book.getPieces()}"></div>
+            </a>
+            <button class="d-flex" th:if="${(book.getPieces() == 0)}" th:value="${book.getIsbn()}" disabled th:name="isbn">CheckIn</button>
+            <form action="checkinBook" method="post" th:unless="${(book.getPieces() == 0)}">
+                <button class="d-flex" th:if="${#lists.contains(bookedList, book.getIsbn())}" formaction="checkoutBook" formmethod="post" th:value="${book.getIsbn()}" th:name="isbn">CheckOut</button>
+                <button class="d-flex" th:unless="${#lists.contains(bookedList, book.getIsbn())}" th:value="${book.getIsbn()}" th:name="isbn">CheckIn</button>
+            </form>
+        </div>
+    </div>
+    <script>
+    </script>
+</body>
+</html>

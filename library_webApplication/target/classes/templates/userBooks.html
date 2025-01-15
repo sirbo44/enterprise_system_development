@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Books</title>
+</head>
+<body>
+  <h1>User books</h1>
+
+<div th:each="book :${books}">
+    <p th:text="book.getIsbn()"></p>
+</div>
+</body>
+</html>

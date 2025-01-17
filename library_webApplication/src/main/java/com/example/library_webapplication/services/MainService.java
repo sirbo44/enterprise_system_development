@@ -1,8 +1,10 @@
 package com.example.library_webapplication.services;
 
+import com.example.library_webapplication.entities.Author;
 import com.example.library_webapplication.entities.JkBooksUser;
 import com.example.library_webapplication.entities.User;
 import com.example.library_webapplication.entities.Book;
+import com.example.library_webapplication.repos.AuthorRepository;
 import com.example.library_webapplication.repos.BookRepository;
 import com.example.library_webapplication.repos.JkBooksUserRepository;
 import com.example.library_webapplication.repos.UserRepository;
@@ -21,6 +23,8 @@ public class MainService {
     private BookRepository bookRepository;
     @Autowired
     private JkBooksUserRepository jkBooksUserRepository;
+    @Autowired
+    private AuthorRepository authorRepository;
 
     public User dologin(String username, String password){
         return userRepository.findByUsernameAndPassword(username, password);
@@ -80,5 +84,13 @@ public class MainService {
             sum = sum + book.getPieces();
         }
         return sum;
+    }
+
+    public List<Author> findAllAuthors(){
+        return authorRepository.findAll();
+    }
+
+    public Author findAuthorById(Integer id) {
+        return authorRepository.findAuthorById(id);
     }
 }

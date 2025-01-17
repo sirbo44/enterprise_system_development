@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>newAuthor</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+</head>
+<body>
+    <h1>New Author</h1>
+    <form action="newAuthor" method="post">
+        <label for="name">Name</label>
+        <input name="name" id="name" placeholder="Name">
+
+        <label for="dob">Date of Birth</label>
+        <input name="dob" id="dob" placeholder="Date of Birth">
+
+        <label for="nationality">Nationality</label>
+        <input name="nationality" id="nationality" placeholder="Nationality">
+
+        <button type="submit">Add</button>
+        <button formaction="cancelLib" formmethod="post">Cancel</button>
+    </form>
+</body>
+</html>

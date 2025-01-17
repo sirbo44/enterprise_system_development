@@ -35,6 +35,9 @@
                         <a class="nav-link" href="newRecord">New Record</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="authors">Authors</a>
+                    </li>
+                    <li class="nav-item">
                         <form action="destroy" method="post">
                             <button>Logout</button>
                         </form>
@@ -50,27 +53,30 @@
     </form>
     <!--Main content-->
     <div class="container border border-dark col-11">
-        <div class="d-flex col-10 flex-fill">
+        <div class="d-flex col-11 flex-fill">
             <div class="col-3 py-2 flex-fill text-center">Title</div>
             <div class="col-1 py-2 flex-fill text-center">ISBN</div>
             <div class="col-2 py-2 flex-fill text-center">Language</div>
             <div class="col-1 py-2 flex-fill text-center">Release</div>
-            <div class="col-4 py-2 flex-fill text-center">Summary</div>
+            <div class="col-3 py-2 flex-fill text-center">Summary</div>
             <div class="col-1 py-2 flex-fill text-center">Pieces</div>
+            <div class="col-1 py-2 flex-fill text-center">Author</div>
         </div>
         <div class="row" th:each="book: ${books}">
-            <a class="clickable col-10 d-flex flex-fill border" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
+            <a class="clickable col-11 d-flex flex-fill border" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
                 <div class="col-3 py-2 flex-fill text-center" th:text="${book.getTitle()}"></div>
                 <div class="col-1 py-2 flex-fill text-center" th:text="${book.getIsbn()}"></div>
                 <div class="col-2 py-2 flex-fill text-center" th:text="${book.getLanguage()}"></div>
                 <div class="col-1 py-2 flex-fill text-center" th:text="${book.getRelease()}"></div>
-                <div class="col-4 py-2 flex-fill text-center cut_text" th:text="${book.getSummary()}"></div>
+                <div class="col-3 py-2 flex-fill text-center cut_text" th:text="${book.getSummary()}"></div>
                 <div class="col-1 py-2 flex-fill text-center" th:text="${book.getPieces()}"></div>
+                <th:block th:each="bookAuthor :${booksAuthors}">
+                    <div class="col-1 py-2 flex-fill text-center" th:if="${bookAuthor.getBookCode().getIsbn() == book.getIsbn()}" th:text="${bookAuthor.getAuthor().getName()}"></div>
+                </th:block>
             </a>
             <form action="editRecord">
                 <button class="d-flex" th:value="${book.getIsbn()}" th:name="isbn">Edit</button>
             </form>
-
             <form action="delRecord" method="post">
                 <button  class="d-flex" th:value="${book.getIsbn()}" th:name="isbn">Delete</button>
             </form>

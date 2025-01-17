@@ -12,11 +12,8 @@ public class Author {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "first_name", nullable = false, length = 24)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false, length = 24)
-    private String lastName;
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
 
     @Column(name = "DOB", nullable = false)
     private LocalDate dob;
@@ -35,21 +32,14 @@ public class Author {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String Name) {
+        this.name = Name;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public LocalDate getDob() {
         return dob;

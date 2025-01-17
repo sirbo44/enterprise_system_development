@@ -1,18 +1,11 @@
 package com.example.library_webapplication;
 
-import com.example.library_webapplication.AppScopeBean;
-import com.example.library_webapplication.entities.Book;
-import com.example.library_webapplication.entities.JkBooksUser;
-import com.example.library_webapplication.entities.User;
-import com.example.library_webapplication.repos.UserRepository;
+import com.example.library_webapplication.entities.*;
+import com.example.library_webapplication.repos.*;
 import com.example.library_webapplication.services.MainService;
-import com.example.library_webapplication.repos.BookRepository;
-import com.example.library_webapplication.repos.JkBooksUserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +17,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Controller
 public class MainController {
@@ -40,6 +32,10 @@ public class MainController {
     private JkBooksUserRepository jkBooksUserRepository;
     @Autowired
     private AppScopeBean applicationScopeBean;
+    @Autowired
+    private AuthorRepository authorRepository;
+    @Autowired
+    private JkBooksAuthorRepository jkBooksAuthorRepository;
 
     @GetMapping("/")
     public String login() {
@@ -131,7 +127,6 @@ public class MainController {
         User user = mainService.uniqueUsername(username);
         user.setRole(role);
         userRepository.save(user);
-        System.out.println(username + " : " + role);
         return "redirect:userManagement";
     }
 
@@ -156,7 +151,11 @@ public class MainController {
     public String displayLibrarian(ModelMap model,
                                    HttpSession session) {
         List<Book> books = bookRepository.findAll();
+        List<Author> authors = authorRepository.findAll();
+        List<JkBooksAuthor> booksAuthors = jkBooksAuthorRepository.findAll();
         model.addAttribute("books", books);
+        model.addAttribute("authors", authors);
+        model.addAttribute("booksAuthors", booksAuthors);
         return "librarianPage";
     }
 
@@ -185,7 +184,9 @@ public class MainController {
     }
 
     @GetMapping("newRecord")
-    public String addForm() {
+    public String addForm(ModelMap model) {
+        List<Author> authorList = mainService.findAllAuthors();
+        model.addAttribute("authorList", authorList);
         return "newRecord";
     }
 
@@ -195,7 +196,8 @@ public class MainController {
                          @RequestParam(name = "language") String language,
                          @RequestParam(name = "release") LocalDate release,
                          @RequestParam(name = "summary") String summary,
-                         @RequestParam(name = "pieces") Integer pieces) {
+                         @RequestParam(name = "pieces") Integer pieces,
+                         @RequestParam(name = "author") Integer author) {
         Book book = new Book();
         book.setTitle(title);
         book.setIsbn(isbn);
@@ -204,6 +206,10 @@ public class MainController {
         book.setSummary(summary);
         book.setPieces(pieces);
         bookRepository.save(book);
+        JkBooksAuthor bookAuthor = new JkBooksAuthor();
+        bookAuthor.setAuthor(mainService.findAuthorById(author));
+        bookAuthor.setBookCode(book);
+        jkBooksAuthorRepository.save(bookAuthor);
         return "redirect:/librarianPage";
     }
 
@@ -238,6 +244,37 @@ public class MainController {
         return "redirect:/librarianPage";
     }
 
+    @GetMapping("newAuthor")
+    public String showAuthorForm() {
+        return "newAuthor";
+    }
+
+    @PostMapping("newAuthor")
+    public String addRec(@RequestParam(name = "name") String name,
+                         @RequestParam(name = "dob") LocalDate dob,
+                         @RequestParam(name = "nationality") String nationality) {
+        Author author = new Author();
+        author.setName(name);
+        author.setDob(dob);
+        author.setNationality(nationality);
+        authorRepository.save(author);
+        return "redirect:/librarianPage";
+    }
+
+    @GetMapping("authors")
+    public String showAuthors(ModelMap model) {
+        List<Author> authorList = mainService.findAllAuthors();
+        model.addAttribute("authorList", authorList);
+        return "authors";
+    }
+
+    @PostMapping("delAuthor")
+    public String deleteAuthor(@RequestParam(name = "id") Integer id) {
+        Author author = mainService.findAuthorById(id);
+        authorRepository.delete(author);
+        return "redirect:/authors";
+    }
+
     @GetMapping("homePage")
     public String displayHome(ModelMap model,
                               HttpSession session) {
@@ -252,7 +289,6 @@ public class MainController {
         model.addAttribute("books", books);
         model.addAttribute("loggedUser", session.getAttribute("loggedUser"));
         model.addAttribute("bookedList", bookedListString);
-        System.out.println(bookedListString);
         return "homePage";
     }
 
@@ -310,14 +346,12 @@ public class MainController {
                            ModelMap model) {
         Book book = mainService.findByIsbn(isbn);
         model.addAttribute("book", book);
-        System.out.println(isbn);
         return "book";
     }
 
     @GetMapping("checkList")
     public String showCheckList() {
         List<JkBooksUser> jkBooksUser = mainService.findAllJkBooksUser();
-        System.out.println(jkBooksUser);
         return "checkList";
     }
     @GetMapping("mybooks")
@@ -325,8 +359,6 @@ public class MainController {
                               ModelMap model) {
         User user = (User) session.getAttribute("loggedUser");
         List<JkBooksUser> bookedList = mainService.findAllByUsername(user.getUsername());
-        System.out.println(user.getUsername());
-        System.out.println(bookedList);
         model.addAttribute("bookedList", bookedList);
         model.addAttribute("loggedUser", user);
         return "mybooks";

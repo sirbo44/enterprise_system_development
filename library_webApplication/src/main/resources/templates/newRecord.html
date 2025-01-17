@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -23,6 +23,13 @@
 
         <label for="pieces">Pieces</label>
         <input name="pieces" id="pieces" placeholder="Pieces">
+
+        <label for="author">Author</label>
+        <select name="author" id="author">
+            <th:block th:each="author: ${authorList}">
+                <option th:value="${author.getId()}" th:text="${author.getName()}"></option>
+            </th:block>
+        </select>
 
         <button type="submit">Add</button>
         <button formaction="cancelNew" formmethod="post">Cancel</button>

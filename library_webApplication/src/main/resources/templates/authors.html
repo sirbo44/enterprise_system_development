@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Authors</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+
+</head>
+<body>
+  <h1>Authors</h1>
+  <!--NAV BAR -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="librarianPage">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="newRecord">New Record</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="newAuthor">New Author</a>
+          </li>
+          <li class="nav-item">
+            <form action="destroy" method="post">
+              <button>Logout</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="row col-12 h-100">
+    <div class="container border border-dark col-12 mh-10 min-vh-10">
+      <div class="row col-12 text-center">
+        <div class="col-4 py-2 flex-fill text-center">Name</div>
+        <div class="col-4 py-2 flex-fill text-center">Date of Birth</div>
+        <div class="col-4 py-2 flex-fill text-center">Nationality</div>
+      </div>
+      <div class="row col-12 vertical-scrollable" th:if="${!authorList.isEmpty()}" th:each="author: ${authorList}">
+        <div class="col-4 py-2 flex-fill text-center border" th:text="${author.getName()}"></div>
+        <div class="col-4 py-2 flex-fill text-center border" th:text="${author.getDob()}"></div>
+        <div class="col-4 py-2 flex-fill text-center border" th:text="${author.getNationality()}"></div>
+        <form action="delAuthor" method="post">
+          <button type="submit" name="id" th:value="${author.getId()}">Delete</button>
+        </form>
+      </div>
+      <div class="container vertical-scrollable" th:unless="${!authorList.isEmpty()}">
+        <div class="col-12 py-2 flex-fill text-center">No Authors found</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

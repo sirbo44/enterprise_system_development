@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ADMIN</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <style>
+        .vertical-scrollable>.row {
+            position: absolute;
+            width: 100%;
+            height:94%;
+            overflow-y: scroll;
+        }
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #f8f9fa;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+    </style>
+</head>
+<body>
+    <!--NAV BAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="adminPage">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="adminPage"> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="userManagement">Users</a>   <!-- add new page -->
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="checkList">Checkins</a>   <!-- add new page -->
+                    </li>
+                    <li class="nav-item export">
+                        <a class="nav-link" href="exportpdf">Export</a>   <!-- add new page -->
+                    </li>
+                    <li class="nav-item">
+                        <form action="destroy" method="post">
+                            <button id="destroy">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="row col-12 h-100">
+        <div id="pie" class="col-6"></div>
+        <div class="container border border-dark col-6 mh-10 min-vh-10">
+            <div class="row text-center">
+                <div class="col-6 py-2 flex-fill text-center">User</div>
+                <div class="col-6 py-2 flex-fill text-center">ISBN</div>
+            </div>
+            <div class="container row vertical-scrollable" th:if="${!bookList.isEmpty()}" th:each="book: ${bookList}">
+                <div class="col-6 py-2 flex-fill text-center border" th:text="${book.getUsername().getUsername()}"></div>
+                <div class="col-6 py-2 flex-fill text-center border" th:text="${book.getIsbn().getIsbn()}"></div>
+            </div>
+            <div class="container vertical-scrollable" th:unless="${!bookList.isEmpty()}">
+                <div class="col-12 py-2 flex-fill text-center">No CheckedIn books found</div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+
+            // Create the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Returned');
+            data.addColumn('number', 'Books');
+            data.addRows([[${books}]]);
+
+            // Set chart options
+            var options = {'title':'Returned Books',
+                'width':0.7*innerWidth,
+                'height':0.7*innerHeight};
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.PieChart(document.getElementById('pie'));
+            chart.draw(data, options);
+        }
+    </script>
+</body>
+</html>

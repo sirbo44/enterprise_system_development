@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My books</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <style>
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #f8f9fa;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+        .checkOut{
+            margin-top:10%;
+            margin-left: 35%;
+            color:white;
+            background-color: Red;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!--NAV BAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="homePage">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form action="homePage">
+                            <a class="nav-link active" aria-current="page" href="homePage"> Home</a>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mybooks">My Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="destroy" method="post">
+                            <button id="destroy">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container border border-dark col-11">
+        <div class="d-flex col-10 flex-fill">
+            <div class="col-2 py-2 flex-fill text-center">Username</div>
+            <div class="col-3 py-2 flex-fill text-center">Book</div>
+            <div class="col-3 py-2 flex-fill text-center">ISBN</div>
+            <div class="col-2 py-2 flex-fill text-center">Check-In</div>
+            <div class="col-2 py-2 flex-fill text-center">Check-Out</div>
+        </div>
+        <div class="row" th:if="${bookedList.isEmpty()}">
+            <h4
+                    class="col-12 py-2 flex-fill text-center">No Checked-In books found</h4>
+        </div>
+        <div class="row" th:unless="${bookedList.isEmpty()}" th:each="book: ${bookedList}">
+            <a class="clickable col-10 d-flex flex-fill border">
+                <div class="col-2 py-2 flex-fill text-center" th:text="${book.getUsername().getUsername()}"></div>
+                <div class="col-3 py-2 flex-fill text-center" th:text="${book.getIsbn().getTitle()}"></div>
+                <div class="col-3 py-2 flex-fill text-center" th:text="${book.getIsbn().getIsbn()}"></div>
+                <div class="col-2 py-2 flex-fill text-center" th:text="${book.getCheckIn()}"></div>
+                <div class="col-2 py-2 flex-fill text-center" th:text="${book.getCheckOut()}"></div>
+
+            </a>
+            <form action="checkinBook" method="post">
+                <button class="d-flex checkOut" formaction="checkoutBook" formmethod="post" th:value="${book.getIsbn().getIsbn()}" th:name="isbn">CheckOut</button>
+            </form>
+        </div>
+    </div>
+
+
+
+</body>
+</html>

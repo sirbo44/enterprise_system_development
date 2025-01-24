@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <style>
+        .image{
+            margin-top:5%;
+            margin-left: 15%;
+        }
+        .details{
+            margin-top:5%;
+            margin-left: -50%;
+        }
+        .title{
+            font-size: 2rem;
+            margin-bottom: 10%;
+        }
+        .isbn, .language, .release, .pieces{
+            margin-bottom: 3%;
+        }
+        .summary{
+            text-align: center;
+        }
+        .box{
+            margin-top:5%;
+        }
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #f8f9fa;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/homePage" th:if="${loggedUser.getRole()=='member'}">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
+            <a class="navbar-brand" href="/librarianPage" th:unless="${loggedUser.getRole()=='member'}">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" th:if="${loggedUser.getRole()=='member'}">
+                        <form action="homePage">
+                            <a class="nav-link active" aria-current="page" href="/homePage"> Home</a>
+                        </form>
+                    </li>
+                    <li class="nav-item" th:unless="${loggedUser.getRole()=='member'}">
+                        <a class="nav-link active" aria-current="page" href="/librarianPage">Home</a>
+                    </li>
+                    <li class="nav-item" th:if="${loggedUser.getRole()=='member'}">
+                        <a class="nav-link" href="/mybooks">My Books</a>
+                    </li>
+                    <li class="nav-item" th:unless="${loggedUser.getRole()=='member'}">
+                        <a class="nav-link" href="/newRecord">New Record</a>
+                    </li>
+                    <li class="nav-item" th:unless="${loggedUser.getRole()=='member'}">
+                        <a class="nav-link" href="/authors">Authors</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="/destroy" method="post">
+                            <button id="destroy">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="row">
+        <div class="d-flex col-11 flex-fill image">
+            <img th:if="${book.getPhoto()==null}" src="https://placehold.co/201x251" alt="Placeholder">
+            <img th:unless="${book.getPhoto()==null}" th:src="@{img/${book.getPhoto()}}" alt="CoverPage Book">
+        </div>
+        <div class="flex-fill details">
+            <div class="title" th:text="${book.getTitle()}"></div>
+            <div class="isbn" th:text="'ISBN: ' + ${book.getIsbn()}"></div>
+            <div class="language" th:text="'Language: ' + ${book.getLanguage()}"></div>
+            <div class="release" th:text="'Release Date: ' + ${book.getRelease()}"></div>
+            <div class="pieces" th:text="'Pieces Available: ' + ${book.getPieces()}"></div>
+        </div>
+    </div>
+    <div class="row align-items-center justify-content-center border col-6 mx-auto border-dark box">
+            <div class="summary d-flex" th:text="${book.getSummary()}"></div>
+        </div>
+    </div>
+</body>
+</html>

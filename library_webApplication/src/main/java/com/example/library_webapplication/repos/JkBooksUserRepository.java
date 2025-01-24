@@ -13,4 +13,6 @@ public interface JkBooksUserRepository extends JpaRepository<JkBooksUser, Intege
   List<JkBooksUser> findAllByUsername(User username);
 
   JkBooksUser findByUsernameAndIsbn(User username, Book isbn);
+
+  Integer countByUsername(User user);
 }

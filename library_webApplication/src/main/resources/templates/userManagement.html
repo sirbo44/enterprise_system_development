@@ -6,12 +6,40 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <style>
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #f8f9fa;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+        #addButton, .cancelButton{
+            margin-left: 5%;
+        }
+        #addButton{
+            width: 10%;
+        }
+        .cancelButton{
+            background-color: red;
+            border:none;
+        }
+        .titles{
+            margin-left: 3%;
+        }
+        .books{
+            margin-left: 1%;
+        }
+    </style>
 </head>
 <body>
-    <h1>User Management</h1>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <!--NAV BAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="adminPage">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -24,8 +52,14 @@
                         <a class="nav-link" href="userManagement">Users</a>   <!-- add new page -->
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="checkList">Checkins</a>   <!-- add new page -->
+                    </li>
+                    <li class="nav-item export">
+                        <a class="nav-link" href="exportpdf">Export</a>   <!-- add new page -->
+                    </li>
+                    <li class="nav-item">
                         <form action="destroy" method="post">
-                            <button>Logout</button>
+                            <button id="destroy">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -34,21 +68,21 @@
     </nav>
     <!-- main content-->
     <div class="container border border-dark col-11">
-        <div class="d-flex flex-fill">
+        <div class="d-flex flex-fill titles">
             <div class="col-3 py-2 flex-fill text-center">Username</div>
             <div class="col-2 py-2 flex-fill text-center">Role</div>
-            <div class="col-3 py-2 flex-fill text-center">Books</div>
+            <div class="col-3 py-2 flex-fill text-center books">Books</div>
         </div>
-        <form class="d-flex flex-fill" action="saveUserChanges" method="post" th:each="user: ${users}">
-            <div class="col-3 py-2 flex-fill text-center border border-dark" name="username" th:value="${user.getUsername()}" th:text="${user.getUsername()}" ></div>
-           <select class="col-2 py-2 flex-fill text-center" name="role">
+        <form class="d-flex flex-fill justify-content-center" action="saveUserChanges" method="post" th:each="user: ${users}">
+            <input readonly class="col-3 py-2 flex-fill text-center border border-dark"  name="username" th:value="${user.getUsername()}" ></input>
+            <select class="col-2 py-2 flex-fill text-center" name="role" id="role">
                <option th:each="role :${roles}" th:if="${role ==user.getRole()}" selected th:value="${role}" th:text="${role}"></option>
                <option th:each="role :${roles}" th:unless="${role ==user.getRole()}" th:value="${role}" th:text="${role}"></option>
-           </select>
+            </select>
             <button th:if="${user.getRole() == 'member'}" formaction="userBooks" formmethod="get" class="col-3">List</button>
             <div th:unless="${user.getRole() == 'member'}" class="col-3"></div>
-            <button formaction="saveUserChanges"  formmethod="post" type="submit">Save</button>
-            <button formaction="cancelAdmin" class="col-1">Cancel</button>
+            <button id="addButton" type="submit">Save</button>
+            <button formaction="cancelAdmin" class="col-1 cancelButton">Cancel</button>
         </form>
     </div>
 </body>

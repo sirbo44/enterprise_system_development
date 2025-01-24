@@ -15,14 +15,37 @@
             text-overflow:ellipsis;
             white-space: nowrap;
         }
+        .line:hover{
+            background-color: lightblue;
+            text-decoration: none;
+        }
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #f8f9fa;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+        .editButton{
+            margin-left: 30%;
+            margin-top: 12%;
+        }
+        .deleteButton{
+            background-color: red;
+            margin-left: 30%;
+            margin-top: 8%;
+        }
+
     </style>
 </head>
 <body>
-    <h1> Librarian Home</h1>
     <!--NAV BAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="librarianPage">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -39,13 +62,16 @@
                     </li>
                     <li class="nav-item">
                         <form action="destroy" method="post">
-                            <button>Logout</button>
+                            <button id="destroy">Logout</button>
                         </form>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+
+
     <!--Search bar-->
     <form class="d-flex" role="search" action="librarianPage" method="post">
         <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
@@ -63,7 +89,7 @@
             <div class="col-1 py-2 flex-fill text-center">Author</div>
         </div>
         <div class="row" th:each="book: ${books}">
-            <a class="clickable col-11 d-flex flex-fill border" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
+            <a class="clickable col-11 d-flex flex-fill border line" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
                 <div class="col-3 py-2 flex-fill text-center" th:text="${book.getTitle()}"></div>
                 <div class="col-1 py-2 flex-fill text-center" th:text="${book.getIsbn()}"></div>
                 <div class="col-2 py-2 flex-fill text-center" th:text="${book.getLanguage()}"></div>
@@ -75,10 +101,10 @@
                 </th:block>
             </a>
             <form action="editRecord">
-                <button class="d-flex" th:value="${book.getIsbn()}" th:name="isbn">Edit</button>
+                <button class="d-flex editButton" th:value="${book.getIsbn()}" th:name="isbn">Edit</button>
             </form>
             <form action="delRecord" method="post">
-                <button  class="d-flex" th:value="${book.getIsbn()}" th:name="isbn">Delete</button>
+                <button  class="d-flex deleteButton" th:value="${book.getIsbn()}" th:name="isbn">Delete</button>
             </form>
         </div>
     </div>

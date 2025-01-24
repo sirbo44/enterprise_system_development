@@ -3,36 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <style>
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #f8f9fa;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+        .cancelButton{
+            background-color: red;
+            border:none;
+        }
+        .newRecord-container{
+            margin-left: 32rem;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 60rem;
+            height: auto;
+        }
+        .add-title{
+            text-align: center;
+        }
+        form{
+            align-items: center;
+        }
+        input{
+            width: 100%;
+            margin-bottom: 2%;
+        }
+        #addButton, .cancelButton{
+            width: 8rem;
+            height: 5rem;
+        }
+
+    </style>
 </head>
 <body>
-    <form action="addRecord" method="post">
-        <label for="title">Title</label>
-        <input name="title" id="title" placeholder="Title">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="librarianPage">
+            <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="librarianPage">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="newRecord">New Record</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="authors">Authors</a>
+                </li>
+                <li class="nav-item">
+                    <form action="destroy" method="post">
+                        <button id="destroy">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="newRecord-container">
+        <h2 class="add-title">Add a new Book record</h2>
+        <form action="addRecord" method="post" enctype="multipart/form-data">
+            <label for="title">Title</label>
+            <input name="title" id="title" placeholder="Title"></br>
 
-        <label for="isbn">ISBN</label>
-        <input name="isbn" id="isbn" placeholder="ISBN">
+            <label for="isbn">ISBN</label>
+            <input name="isbn" id="isbn" placeholder="ISBN"></br>
 
-        <label for="language">Language</label>
-        <input name="language" id="language" placeholder="Language">
+            <label for="language">Language</label>
+            <input name="language" id="language" placeholder="Language"></br>
 
-        <label for="release">Release</label>
-        <input name="release" id="release" placeholder="Release">
+            <label for="release">Release</label>
+            <input name="release" id="release" placeholder="Release"></br>
 
-        <label for="summary">Summary</label>
-        <input name="summary" id="summary" placeholder="Summary">
+            <label for="summary">Summary</label>
+            <input name="summary" id="summary" placeholder="Summary"></br>
 
-        <label for="pieces">Pieces</label>
-        <input name="pieces" id="pieces" placeholder="Pieces">
+            <label for="pieces">Pieces</label>
+            <input name="pieces" id="pieces" placeholder="Pieces"></br>
 
-        <label for="author">Author</label>
-        <select name="author" id="author">
-            <th:block th:each="author: ${authorList}">
-                <option th:value="${author.getId()}" th:text="${author.getName()}"></option>
-            </th:block>
-        </select>
+            <label for="author">Author</label>
+            <select name="author" id="author">
+                <th:block th:each="author: ${authorList}">
+                    <option th:value="${author.getId()}" th:text="${author.getName()}"></option></br>
+                </th:block>
+            </select>
 
-        <button type="submit">Add</button>
-        <button formaction="cancelNew" formmethod="post">Cancel</button>
-    </form>
+            <input type="file" name="image" accept="image/*" class="form-control-file">
+
+            <button id="addButton" type="submit">Add</button>
+            <button formaction="cancelNew" formmethod="post" class="cancelButton">Cancel</button>
+        </form>
+    </div>
 </body>
 </html>

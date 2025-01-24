@@ -10,9 +10,6 @@ public class AppScopeBean {
     private int numberofusers;
 
 
-
-
-
     public AppScopeBean() {
         numberofusers = 0;
     }

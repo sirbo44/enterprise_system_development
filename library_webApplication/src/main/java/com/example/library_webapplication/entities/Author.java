@@ -3,6 +3,8 @@ package com.example.library_webapplication.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "authors")
@@ -21,8 +23,8 @@ public class Author {
     @Column(name = "Nationality", nullable = false, length = 24)
     private String nationality;
 
-    @OneToOne(mappedBy = "author")
-    private JkBooksAuthor jkBooksAuthor;
+    @OneToMany(mappedBy = "author")
+    private Set<JkBooksAuthor> jkBooksAuthors = new LinkedHashSet<>();
 
     public Integer getId() {
         return id;
@@ -36,10 +38,9 @@ public class Author {
         return name;
     }
 
-    public void setName(String Name) {
-        this.name = Name;
+    public void setName(String name) {
+        this.name = name;
     }
-
 
     public LocalDate getDob() {
         return dob;
@@ -57,12 +58,12 @@ public class Author {
         this.nationality = nationality;
     }
 
-    public JkBooksAuthor getJkBooksAuthor() {
-        return jkBooksAuthor;
+    public Set<JkBooksAuthor> getJkBooksAuthors() {
+        return jkBooksAuthors;
     }
 
-    public void setJkBooksAuthor(JkBooksAuthor jkBooksAuthor) {
-        this.jkBooksAuthor = jkBooksAuthor;
+    public void setJkBooksAuthors(Set<JkBooksAuthor> jkBooksAuthors) {
+        this.jkBooksAuthors = jkBooksAuthors;
     }
 
 }

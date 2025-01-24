@@ -15,20 +15,72 @@
             text-overflow:ellipsis;
             white-space: nowrap;
         }
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-brand img {
+            height: auto;
+            width: auto;
+        }
+        .hero {
+            background-color: #343a40;
+            color: #fff;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+        }
+        .container {
+            margin-top: 2rem;
+        }
+        .checkIn{
+            margin-top:10%;
+            margin-left: 50%;
+            color:white;
+            background-color: Green;
+            border: none;
+        }
+        .checkOut{
+            margin-top:10%;
+            margin-left: 35%;
+            color:white;
+            background-color: Red;
+            border: none;
+        }
+        .line:hover{
+            background-color: lightblue;
+            text-decoration: none;
+        }
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #f8f9fa;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+
     </style>
 </head>
 <body>
-<h1>Home Page</h1>  <!-- to be deleted after the complete implementation of the application-->
-<h1 th:text="'Hello ' + ${user.getUsername()}"></h1>
     <!--NAV BAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="homePage">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <form action="homePage">
                             <a class="nav-link active" aria-current="page" href="homePage"> Home</a>
@@ -39,7 +91,7 @@
                     </li>
                     <li class="nav-item">
                         <form action="destroy" method="post">
-                            <button>Logout</button>
+                            <button id="destroy">Logout</button>
                         </form>
                     </li>
                 </ul>
@@ -53,7 +105,7 @@
     </form>
     <!--Main content-->
     <div class="container border border-dark col-11">
-        <div class="d-flex col-10 flex-fill">
+        <div class="d-flex col-11 flex-fill">
             <div class="col-3 py-2 flex-fill text-center">Title</div>
             <div class="col-1 py-2 flex-fill text-center">ISBN</div>
             <div class="col-2 py-2 flex-fill text-center">Language</div>
@@ -62,7 +114,7 @@
             <div class="col-1 py-2 flex-fill text-center">Pieces</div>
         </div>
         <div class="row" th:each="book: ${books}">
-            <a class="clickable col-10 d-flex flex-fill border" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
+            <a class="clickable col-11 d-flex flex-fill border line" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
                 <div class="col-3 py-2 flex-fill text-center" th:text="${book.getTitle()}"></div>
                 <div class="col-1 py-2 flex-fill text-center" th:text="${book.getIsbn()}"></div>
                 <div class="col-2 py-2 flex-fill text-center" th:text="${book.getLanguage()}"></div>
@@ -70,10 +122,12 @@
                 <div class="col-4 py-2 flex-fill text-center cut_text" th:text="${book.getSummary()}"></div>
                 <div class="col-1 py-2 flex-fill text-center" th:text="${book.getPieces()}"></div>
             </a>
-            <button class="d-flex" th:if="${(book.getPieces() == 0)}" th:value="${book.getIsbn()}" disabled th:name="isbn">CheckIn</button>
-            <form action="checkinBook" method="post" th:unless="${(book.getPieces() == 0)}">
-                <button class="d-flex" th:if="${#lists.contains(bookedList, book.getIsbn())}" formaction="checkoutBook" formmethod="post" th:value="${book.getIsbn()}" th:name="isbn">CheckOut</button>
-                <button class="d-flex" th:unless="${#lists.contains(bookedList, book.getIsbn())}" th:value="${book.getIsbn()}" th:name="isbn">CheckIn</button>
+            <form th:if="${#lists.contains(bookedList, book.getIsbn())}">
+                <button class="d-flex checkButtons checkOut" formaction="checkoutBook" formmethod="post" th:value="${book.getIsbn()}" th:name="isbn">CheckOut</button>
+            </form>
+            <form th:unless="${#lists.contains(bookedList, book.getIsbn())}" action="checkinBook" method="post">
+                <button class="d-flex checkButtons checkIn" th:if="${(book.getPieces() == 0)}" th:value="${book.getIsbn()}" disabled th:name="isbn">CheckIn</button>
+                <button class="d-flex checkButtons checkIn" th:unless="${(book.getPieces() == 0)}" th:value="${book.getIsbn()}" th:name="isbn">CheckIn</button>
             </form>
         </div>
     </div>

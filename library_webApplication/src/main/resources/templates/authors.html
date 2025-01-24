@@ -6,14 +6,29 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
-
+  <style>
+    #destroy{
+      margin-top: 12%;
+      border: none;
+      background-color: #f8f9fa;
+    }
+    #destroy:hover {
+      background-color: brown;
+    }
+    .deleteButton{
+      margin-top: 5%;
+      margin-left: 18%;
+      width: 70%;
+    }
+  </style>
 </head>
 <body>
-  <h1>Authors</h1>
   <!--NAV BAR -->
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="librarianPage">
+        <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -30,26 +45,27 @@
           </li>
           <li class="nav-item">
             <form action="destroy" method="post">
-              <button>Logout</button>
+              <button id="destroy">Logout</button>
             </form>
           </li>
         </ul>
       </div>
     </div>
   </nav>
+
   <div class="row col-12 h-100">
     <div class="container border border-dark col-12 mh-10 min-vh-10">
       <div class="row col-12 text-center">
         <div class="col-4 py-2 flex-fill text-center">Name</div>
-        <div class="col-4 py-2 flex-fill text-center">Date of Birth</div>
+        <div class="col-3 py-2 flex-fill text-center">Date of Birth</div>
         <div class="col-4 py-2 flex-fill text-center">Nationality</div>
       </div>
       <div class="row col-12 vertical-scrollable" th:if="${!authorList.isEmpty()}" th:each="author: ${authorList}">
         <div class="col-4 py-2 flex-fill text-center border" th:text="${author.getName()}"></div>
-        <div class="col-4 py-2 flex-fill text-center border" th:text="${author.getDob()}"></div>
+        <div class="col-3 py-2 flex-fill text-center border" th:text="${author.getDob()}"></div>
         <div class="col-4 py-2 flex-fill text-center border" th:text="${author.getNationality()}"></div>
-        <form action="delAuthor" method="post">
-          <button type="submit" name="id" th:value="${author.getId()}">Delete</button>
+        <form action="delAuthor" method="post" class="col-1">
+          <button type="submit" class="deleteButton" name="id" th:value="${author.getId()}">Delete</button>
         </form>
       </div>
       <div class="container vertical-scrollable" th:unless="${!authorList.isEmpty()}">

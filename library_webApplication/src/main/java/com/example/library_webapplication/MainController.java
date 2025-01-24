@@ -8,11 +8,13 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +70,8 @@ public class MainController {
     @PostMapping("/doregister")
     public String doregister(@RequestParam String username,
                              @RequestParam String password1,
-                             @RequestParam String password2) {
+                             @RequestParam String password2,
+                             ModelMap model) {
         String next_page = "/login";
         if (!password1.equals(password2)) {
             next_page = "/register";
@@ -78,6 +81,7 @@ public class MainController {
             if (user != null){
                 next_page = "/register";
                 String error_message = "existing user";
+                model.addAttribute("errorMessage", error_message);
             } else {
                 //add the new user and add it into the database
                 User newUser = new User();
@@ -134,18 +138,17 @@ public class MainController {
     public String showUserBooks(@RequestParam String username,
                                 ModelMap model) {
         User user = mainService.uniqueUsername(username);
-//        List<Book> books = mainService.findByUsername(user);
-//        model.addAttribute("books", books);
+        List<JkBooksUser> jkBooksUsersbooks = mainService.findAllByUsername(user.getUsername());
+        List<JkBooksAuthor> booksAuthors = jkBooksAuthorRepository.findAll();
+        List<Book> books = new ArrayList<>();
+        for (JkBooksUser jkBooksUser: jkBooksUsersbooks){
+            books.add(jkBooksUser.getIsbn());
+        }
+
+        model.addAttribute("books", books);
+        model.addAttribute("booksAuthors", booksAuthors);
         return "userBooks";
     }
-    @GetMapping("test")
-    public String test() {
-        return "redirect:/userBooks";
-    }
-
-
-
-
 
     @GetMapping("librarianPage")
     public String displayLibrarian(ModelMap model,
@@ -163,12 +166,8 @@ public class MainController {
     public String searchLibBar(ModelMap model,
                             @RequestParam String search,
                             HttpSession session) {
-        List<Object> books = mainService.searchList(search, search);
-        if (books.get(0) == null){
-            model.addAttribute("books", books.get(1));
-        } else {
-            model.addAttribute("books", books.get(0));
-        }
+        List<Book> books = mainService.searchList(search, search);
+        model.addAttribute("books", books);
         return "librarianPage";
     }
 
@@ -178,8 +177,9 @@ public class MainController {
     }
 
     @PostMapping("delRecord")
-    public String deleteRecord(@RequestParam(name = "isbn") String isbn) {
+    public String deleteRecord(@RequestParam(name = "isbn") String isbn) throws IOException {
         bookRepository.deleteById(isbn);
+        Files.deleteIfExists(Path.of(System.getProperty("user.dir") + "\\library_webApplication\\src\\main\\resources\\static\\img\\" + isbn +".jpg"));
         return "redirect:/librarianPage";
     }
 
@@ -197,7 +197,10 @@ public class MainController {
                          @RequestParam(name = "release") LocalDate release,
                          @RequestParam(name = "summary") String summary,
                          @RequestParam(name = "pieces") Integer pieces,
-                         @RequestParam(name = "author") Integer author) {
+                         @RequestParam(name = "author") Integer author,
+                         @RequestParam(name = "image") MultipartFile file) throws IOException {
+        Path fileNameAndPath = Paths.get(System.getProperty("user.dir") + "\\library_webApplication\\src\\main\\resources\\static\\img\\", isbn+".jpg");
+        Files.write(fileNameAndPath, file.getBytes());
         Book book = new Book();
         book.setTitle(title);
         book.setIsbn(isbn);
@@ -205,6 +208,7 @@ public class MainController {
         book.setRelease(release);
         book.setSummary(summary);
         book.setPieces(pieces);
+        book.setPhoto(isbn+".jpg");
         bookRepository.save(book);
         JkBooksAuthor bookAuthor = new JkBooksAuthor();
         bookAuthor.setAuthor(mainService.findAuthorById(author));
@@ -296,13 +300,16 @@ public class MainController {
     public String searchHomeBar(ModelMap model,
                                 @RequestParam String search,
                                 HttpSession session) {
-        List<Object> books = mainService.searchList(search, search);
-        if (books.get(0) == null){
-            model.addAttribute("books", books.get(1));
-        } else {
-            model.addAttribute("books", books.get(0));
+        User user = (User) session.getAttribute("loggedUser");
+        List<JkBooksUser> bookedList = mainService.findAllByUsername(user.getUsername());
+        List<Book> books = mainService.searchList(search, search);
+        List<String> bookedListString = new ArrayList<>();
+        for (JkBooksUser booked: bookedList){
+            bookedListString.add(booked.getIsbn().getIsbn());
         }
+        model.addAttribute("books", books);
         model.addAttribute("loggedUser", session.getAttribute("loggedUser"));
+        model.addAttribute("bookedList", bookedListString);
         return "homePage";
     }
 
@@ -313,6 +320,9 @@ public class MainController {
         JkBooksUser booksUser = new JkBooksUser();
         booksUser.setIsbn(book);
         booksUser.setUsername((User) session.getAttribute("loggedUser"));
+        booksUser.setCheckIn(LocalDate.now());
+        booksUser.setCheckOut(LocalDate.now().plusDays(7));
+        // pop up to inform the user about the checkout
         jkBooksUserRepository.save(booksUser);
         book.setPieces(book.getPieces() - 1);
         bookRepository.save(book);
@@ -343,17 +353,21 @@ public class MainController {
 
     @GetMapping("book/{isbn}")
     public String showBook(@PathVariable String isbn,
-                           ModelMap model) {
+                           ModelMap model,
+                           HttpSession session) {
         Book book = mainService.findByIsbn(isbn);
         model.addAttribute("book", book);
+        model.addAttribute("loggedUser", session.getAttribute("loggedUser"));
         return "book";
     }
 
     @GetMapping("checkList")
-    public String showCheckList() {
-        List<JkBooksUser> jkBooksUser = mainService.findAllJkBooksUser();
+    public String showCheckList(ModelMap model) {
+        List<JkBooksUser> bookedList = mainService.findAllJkBooksUser();
+        model.addAttribute("bookedList", bookedList);
         return "checkList";
     }
+
     @GetMapping("mybooks")
     public String showMyBooks(HttpSession session,
                               ModelMap model) {
@@ -369,3 +383,4 @@ public class MainController {
         return "redirect:/librarianPage";
     }
 }
+

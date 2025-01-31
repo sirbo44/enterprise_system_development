@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <style>
+        .row-height{
+            max-height:50%;
+        }
+        .cut_text{
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+        }
+        .navbar {
+            background-color: #e5dad8;
+        }
+        .nav-link{
+            color: #1e3f48;
+        }
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-brand img {
+            height: auto;
+            width: auto;
+        }
+        .hero {
+            background-color: #343a40;
+            color: #fff;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+        }
+        .container {
+            margin-top: 2rem;
+        }
+        .checkIn{
+            margin-top:10%;
+            margin-left: 50%;
+            color:white;
+            background-color: Green;
+            border: none;
+        }
+        .checkOut{
+            margin-top:10%;
+            margin-left: 35%;
+            color:white;
+            background-color: #E34234;
+            border: none;
+        }
+        .line:hover{
+            background-color: lightblue;
+            text-decoration: none;
+        }
+        .line{
+            color: #1e3f48;
+        }
+        #destroy{
+            margin-top: 12%;
+            border: none;
+            background-color: #e5dad8;
+            color: #1e3f48;
+        }
+        #destroy:hover {
+            background-color: brown;
+        }
+
+    </style>
+</head>
+<body>
+    <!--NAV BAR -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="homePage">
+                <img src="/img/logo_bar.png" style="width: 11rem; height: 4rem;" alt="Library Logo"/>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <form action="homePage">
+                            <a class="nav-link active" aria-current="page" href="homePage"> Home</a>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mybooks">My Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="destroy" method="post">
+                            <button id="destroy">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--Search bar-->
+    <form class="d-flex" role="search" action="homePage" method="post">
+        <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+    <!--Main content-->
+    <div class="container border border-dark col-11">
+        <div class="d-flex col-11 flex-fill">
+            <div class="col-3 py-2 flex-fill text-center">Title</div>
+            <div class="col-1 py-2 flex-fill text-center">ISBN</div>
+            <div class="col-2 py-2 flex-fill text-center">Language</div>
+            <div class="col-1 py-2 flex-fill text-center">Release</div>
+            <div class="col-4 py-2 flex-fill text-center">Summary</div>
+            <div class="col-1 py-2 flex-fill text-center">Pieces</div>
+        </div>
+        <div class="row" th:each="book: ${books}">
+            <a class="clickable col-11 d-flex flex-fill border line" th:href="@{/book/{isbn}(isbn=${book.getIsbn()})}" th:name="${book.getIsbn()}">     <!--to redirect to the books page-->
+                <div class="col-3 py-2 flex-fill text-center" th:text="${book.getTitle()}"></div>
+                <div class="col-1 py-2 flex-fill text-center" th:text="${book.getIsbn()}"></div>
+                <div class="col-2 py-2 flex-fill text-center" th:text="${book.getLanguage()}"></div>
+                <div class="col-1 py-2 flex-fill text-center" th:text="${book.getRelease()}"></div>
+                <div class="col-4 py-2 flex-fill text-center cut_text" th:text="${book.getSummary()}"></div>
+                <div class="col-1 py-2 flex-fill text-center" th:text="${book.getPieces()}"></div>
+            </a>
+            <form th:if="${#lists.contains(bookedList, book.getIsbn())}">
+                <button class="d-flex checkButtons checkOut" formaction="checkoutBook" formmethod="post" th:value="${book.getIsbn()}" th:name="isbn">CheckOut</button>
+            </form>
+            <form th:unless="${#lists.contains(bookedList, book.getIsbn())}" action="checkinBook" method="post">
+                <button class="d-flex checkButtons checkIn" th:if="${(book.getPieces() == 0)}" th:value="${book.getIsbn()}" disabled th:name="isbn">CheckIn</button>
+                <button class="d-flex checkButtons checkIn" th:unless="${(book.getPieces() == 0)}" th:value="${book.getIsbn()}" th:name="isbn">CheckIn</button>
+            </form>
+        </div>
+    </div>
+    <script>
+    </script>
+</body>
+</html>

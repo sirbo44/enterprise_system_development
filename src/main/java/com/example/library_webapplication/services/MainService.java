@@ -208,6 +208,12 @@ public class MainService {
         PdfPTable fifthRowTable = new PdfPTable(6);
         fifthRowTable.setPaddingTop(20);
         fifthRowTable.setWidthPercentage(85);
+        fifthRowTable.addCell("Title");
+        fifthRowTable.addCell("ISBN");
+        fifthRowTable.addCell("Language");
+        fifthRowTable.addCell("Pieces");
+        fifthRowTable.addCell("Photo");
+        fifthRowTable.addCell("Authors");
         for (Book book: books) {
             fifthRowTable.addCell(book.getTitle());
             fifthRowTable.addCell(book.getIsbn());
